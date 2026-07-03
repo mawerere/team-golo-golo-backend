@@ -1,5 +1,10 @@
 require("dotenv").config();
 
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
+
 const { Pool } = require("pg");
 
 // Check if the server is running in a production environment (cloud)
