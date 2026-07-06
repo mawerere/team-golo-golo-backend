@@ -46,3 +46,23 @@ const registerUser = async (req, res) => {
 };
 
 module.exports = { registerUser };
+// Fetch user metadata/role by Firebase UID
+export const getUserByUid = async (req, res) => {
+  const { uid } = req.params;
+
+  try {
+    const result = await db.query(
+      "SELECT id, firebase_uid, full_name, email, role, created_at FROM users WHERE firebase_uid = $1",
+      [uid]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: "User profile not found in ledger." });
+    }
+
+    res.status(200).json({ success: true, user: result.rows[0] });
+  } catch (error) {
+    console.error("❌ Profile Fetch Database Error:", error.message);
+    res.status(500).json({ success: false, error: "Internal server error retrieving user profile." });
+  }
+};
