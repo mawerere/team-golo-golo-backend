@@ -45,13 +45,13 @@ const registerUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser };
-// Fetch user metadata/role by Firebase UID
-export const getUserByUid = async (req, res) => {
+// 🔧 FIX 1: Removed the 'export' keyword from the front of the function
+const getUserByUid = async (req, res) => {
   const { uid } = req.params;
 
   try {
-    const result = await db.query(
+    // 🔧 FIX 2: Changed 'db.query' to 'pool.query' to match your import at the top
+    const result = await pool.query(
       "SELECT id, firebase_uid, full_name, email, role, created_at FROM users WHERE firebase_uid = $1",
       [uid]
     );
@@ -65,4 +65,10 @@ export const getUserByUid = async (req, res) => {
     console.error("❌ Profile Fetch Database Error:", error.message);
     res.status(500).json({ success: false, error: "Internal server error retrieving user profile." });
   }
+};
+
+// 🔧 FIX 3: Exported both functions together using standard CommonJS syntax
+module.exports = { 
+  registerUser,
+  getUserByUid 
 };
