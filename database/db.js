@@ -1,18 +1,11 @@
 require("dotenv").config();
 const { Pool } = require("pg");
 
-// Check if the server is running in a production environment (cloud)
 const isProduction = process.env.NODE_ENV === "production";
 
-// Use the single connection string in production, fallback to individual keys for local development
+// Force connection string if in production to prevent fallback bugs
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  host: process.env.DATABASE_URL ? undefined : process.env.DB_HOST,
-  port: process.env.DATABASE_URL ? undefined : process.env.DB_PORT,
-  database: process.env.DATABASE_URL ? undefined : process.env.DB_NAME,
-  user: process.env.DATABASE_URL ? undefined : process.env.DB_USER,
-  password: process.env.DATABASE_URL ? undefined : process.env.DB_PASSWORD,
-  // Enforce SSL encryption in the cloud, but keep it disabled on your local machine
   ssl: isProduction ? { rejectUnauthorized: false } : false,
 });
 
